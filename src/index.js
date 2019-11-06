@@ -1,16 +1,16 @@
 const core = require('@actions/core');
 const { spawnSync } = require('child_process');
 
-const successMessage = '';
 const maxRetryAttempts = parseInt(`${core.getInput('max-retry-attempts')}`);
 const retryDelay = parseInt(`${core.getInput('retry-delay')}`);
 
 function checkPodsAreUp() {
     var lastCommandRunning = spawnSync('kubectl', ['get', 'pods','--field-selector=status.phase!=Running,status.phase!=Completed']);
-    var output = lastCommandRunning.stdout.toString();
+    var errorOutput = lastCommandRunning.stderr.toString();
+    var defaultOutput = lastCommandRunning.stdout.toString();
     return {
-        success: `${output}`.trim() == '',
-        message: output,
+        success: errorOutput.includes('No resources found'),
+        message: defaultOutput,
     };
 }
 
@@ -28,7 +28,7 @@ try {
     var result = checkPodsAreUp();
     var attemptsCount = 0;
     
-    while(!result.success || attemptsCount < maxRetryAttempts) {
+    while(!result.success && attemptsCount < maxRetryAttempts) {
         console.log(`Waiting ${retryDelay} seconds`);
         attemptsCount++;
         wait(retryDelay);

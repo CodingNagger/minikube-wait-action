@@ -35,7 +35,7 @@ jobs:
     - name: Install Nginx pod
       run: kubectl apply -f https://k8s.io/examples/application/deployment.yaml
     - name: Wait for pods
-      uses: CodingNagger/minikube-wait-action@v1.0.0
+      uses: CodingNagger/minikube-wait-action@v1.0.1
     - name: Check pods
       run: |
         kubectl get pods
