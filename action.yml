@@ -1,5 +1,5 @@
-name: 'minikube-wait-action'
-description: 'Waits for Github Actions started Kubernetes pods to be in a healthy state.'
+name: 'Kubernetes Pods Health Wait'
+description: 'Waits for Github Actions started Kubernetes pods to all be in a healthy state.'
 branding:
   icon: 'watch'
   color: 'blue'
