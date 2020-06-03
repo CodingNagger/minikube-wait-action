@@ -12,6 +12,14 @@ inputs:
     description: 'Time to wait (in seconds) before attempting the check after a failure.'
     required: false
     default: 30
+  namespace:
+    description: "Namespace to check"
+    required: false
+    default: 'default'
+  all-namespaces:
+    description: 'Set true to check all namespaces'
+    required: false
+    default: 'false'
 runs:
   using: 'node12'
   main: 'src/index.js'
