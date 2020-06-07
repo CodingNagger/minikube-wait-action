@@ -3,9 +3,15 @@ const { spawnSync } = require('child_process');
 
 const maxRetryAttempts = parseInt(`${core.getInput('max-retry-attempts')}`);
 const retryDelay = parseInt(`${core.getInput('retry-delay')}`);
+const namespace = core.getInput('namespace')
+const allNamespaces = core.getInput('all-namespaces').toLowerCase() == "true" ? true : false
 
 function checkPodsAreUp() {
-    var lastCommandRunning = spawnSync('kubectl', ['get', 'pods','--field-selector=status.phase!=Running,status.phase!=Completed']);
+    if (allNamespaces) {
+        var lastCommandRunning = spawnSync('kubectl', ['get', 'pods', '--field-selector=status.phase!=Running,status.phase!=Completed', '--all-namespaces']);
+    } else {
+        var lastCommandRunning = spawnSync('kubectl', ['get', 'pods', '--field-selector=status.phase!=Running,status.phase!=Completed', '-n ', namespace]);
+    }
     var errorOutput = lastCommandRunning.stderr.toString();
     var defaultOutput = lastCommandRunning.stdout.toString();
     return {
@@ -26,6 +32,7 @@ if (maxRetryAttempts <= 0 || retryDelay <= 0) {
 try {
     console.log('Check pods are up...');
     var result = checkPodsAreUp();
+    console.log(result.message);
     var attemptsCount = 0;
     
     while(!result.success && attemptsCount < maxRetryAttempts) {
